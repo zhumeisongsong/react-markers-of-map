@@ -26,7 +26,7 @@ const MarkerImg = styled.img`
 const CurrentLocation = styled.div`
   text-align: center;
   color: #fff;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: bold;
   padding-bottom: 4px;
 `;
@@ -53,7 +53,7 @@ const PlaceCard = styled.div`
 function App() {
   const [swiper, setSwiper] = useState<any>(null);
   const [activeMarker, setActiveMarker] = useState(1);
-  const [currentLocation, setCurentLocation] = useState(0);
+  const [currentLocation, setCurentLocation] = useState(0); //TODO: get currentLocation by query params
   const [markers, setMarkers] = useState([
     { id: 1, name: "Place 1", position: [50, 30] },
     { id: 2, name: "Place 2", position: [80, 40] },
@@ -61,6 +61,7 @@ function App() {
     { id: 4, name: "Place 4", position: [30, 30] },
     { id: 5, name: "Place 5", position: [55, 45] }
   ]);
+  const [scaleValue, setScaleValue] = useState(1);
 
   const onMarkerClick = useCallback(
     (index: number) => {
@@ -73,14 +74,20 @@ function App() {
     setCurentLocation(0);
   }, []);
 
+  console.log(scaleValue);
+
   return useMemo(
     () => (
       <>
         <TransformWrapper
           initialScale={1}
+          minScale={1}
+          maxScale={3}
           initialPositionX={0}
           initialPositionY={0}
-          maxScale={3}
+          onZoom={(ref, event) => {
+            setScaleValue(ref.state.scale < 1 ? 1 : ref.state.scale);
+          }}
         >
           {({
             zoomIn,
@@ -105,7 +112,13 @@ function App() {
                 >
                   {markers.map((marker, index) => (
                     <SwiperSlide key={index}>
-                      <PlaceCard>{marker.name}</PlaceCard>
+                      <PlaceCard
+                        onClick={() => {
+                          swiper.slideTo(index);
+                        }}
+                      >
+                        {marker.name}
+                      </PlaceCard>
                     </SwiperSlide>
                   ))}
                 </Swiper>
@@ -124,7 +137,8 @@ function App() {
                       onClick={() => onMarkerClick(index)}
                       style={{
                         left: marker.position[0] + "%",
-                        top: marker.position[1] + "%"
+                        top: marker.position[1] + "%",
+                        transform: `scale(${1 / scaleValue})`
                       }}
                     >
                       <CurrentLocation
@@ -160,7 +174,7 @@ function App() {
         </TransformWrapper>
       </>
     ),
-    [activeMarker, markers, onMarkerClick]
+    [activeMarker, markers, scaleValue, currentLocation, onMarkerClick]
   );
 }
 

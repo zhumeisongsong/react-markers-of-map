@@ -14,8 +14,21 @@ const MarkerContainer = styled.section`
   left: 0;
 `;
 
-const Marker = styled.img`
+const Marker = styled.div`
   position: absolute;
+  transition: all 0.2s ease-in-out;
+`;
+
+const MarkerImg = styled.img`
+  transition: all 0.2s ease-in-out;
+`;
+
+const CurrentLocation = styled.div`
+  text-align: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  padding-bottom: 4px;
 `;
 
 const SwiperContainer = styled.section`
@@ -50,7 +63,6 @@ function App() {
 
   const onMarkerClick = useCallback(
     (index: number) => {
-      console.log(index);
       swiper.slideTo(index);
     },
     [swiper]
@@ -99,22 +111,37 @@ function App() {
                 <MarkerContainer>
                   {markers.map((marker, index) => (
                     <Marker
-                      key={index}
-                      width={44}
-                      id={String(index + 1)}
-                      src={
-                        activeMarker === index + 1
-                          ? markerIconActive
-                          : markerIcon
-                      }
-                      alt={`marker${index + 1}`}
+                      onClick={() => onMarkerClick(index)}
                       style={{
                         left: marker.position[0] + "%",
-                        top: marker.position[1] + "%",
-                        pointerEvents: "visible"
+                        top: marker.position[1] + "%"
                       }}
-                      onClick={() => onMarkerClick(index)}
-                    />
+                    >
+                      <CurrentLocation
+                        style={
+                          activeMarker === index + 1
+                            ? { height: "auto" }
+                            : { height: 0, opacity: 0 }
+                        }
+                      >
+                        現在地
+                      </CurrentLocation>
+
+                      <MarkerImg
+                        key={index}
+                        width={44}
+                        id={String(index + 1)}
+                        src={
+                          activeMarker === index + 1
+                            ? markerIconActive
+                            : markerIcon
+                        }
+                        alt={`marker${index + 1}`}
+                        style={{
+                          pointerEvents: "visible"
+                        }}
+                      />
+                    </Marker>
                   ))}
                 </MarkerContainer>
               </TransformComponent>

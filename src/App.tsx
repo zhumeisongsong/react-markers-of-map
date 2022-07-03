@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import styled from "styled-components";
 import markerIcon from "./map-marker.svg";
@@ -38,6 +38,7 @@ const PlaceCard = styled.div`
 `;
 
 function App() {
+  const [swiper, setSwiper] = useState<any>(null);
   const [activeMarker, setActiveMarker] = useState(1);
   const [markers, setMarkers] = useState([
     { id: 1, name: "Place 1", position: [50, 30] },
@@ -47,10 +48,23 @@ function App() {
     { id: 5, name: "Place 5", position: [55, 45] }
   ]);
 
+  const onMarkerClick = useCallback(
+    (index: number) => {
+      console.log(index);
+      swiper.slideTo(index);
+    },
+    [swiper]
+  );
+
   return useMemo(
     () => (
       <>
-        <TransformWrapper initialScale={1} initialPositionX={0} initialPositionY={0} maxScale={3}>
+        <TransformWrapper
+          initialScale={1}
+          initialPositionX={0}
+          initialPositionY={0}
+          maxScale={3}
+        >
           {({
             zoomIn,
             zoomOut,
@@ -70,6 +84,7 @@ function App() {
                     zoomToElement(String(swiper.activeIndex + 1), 2);
                     setActiveMarker(swiper.activeIndex + 1);
                   }}
+                  onSwiper={(swiper) => setSwiper(swiper)}
                 >
                   {markers.map((marker, index) => (
                     <SwiperSlide key={index}>
@@ -95,8 +110,10 @@ function App() {
                       alt={`marker${index + 1}`}
                       style={{
                         left: marker.position[0] + "%",
-                        top: marker.position[1] + "%"
+                        top: marker.position[1] + "%",
+                        pointerEvents: "visible"
                       }}
+                      onClick={() => onMarkerClick(index)}
                     />
                   ))}
                 </MarkerContainer>
@@ -106,7 +123,7 @@ function App() {
         </TransformWrapper>
       </>
     ),
-    [activeMarker, markers]
+    [activeMarker, markers, onMarkerClick]
   );
 }
 

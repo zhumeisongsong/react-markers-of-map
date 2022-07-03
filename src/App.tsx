@@ -50,7 +50,7 @@ function App() {
   return useMemo(
     () => (
       <>
-        <TransformWrapper initialScale={1} maxScale={3}>
+        <TransformWrapper initialScale={1} initialPositionX={0} initialPositionY={0} maxScale={3}>
           {({
             zoomIn,
             zoomOut,
@@ -79,7 +79,7 @@ function App() {
                 </Swiper>
               </SwiperContainer>
               <TransformComponent>
-                <img width="100%" src={bgImage} alt="map" />
+                <img height="900px" src={bgImage} alt="map" />
 
                 <MarkerContainer>
                   {markers.map((marker, index) => (
@@ -106,7 +106,7 @@ function App() {
         </TransformWrapper>
       </>
     ),
-    [activeMarker,markers]
+    [activeMarker, markers]
   );
 }
 

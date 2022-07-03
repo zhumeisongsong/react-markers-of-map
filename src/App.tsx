@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import styled from "styled-components";
 import markerIcon from "./map-marker.svg";
@@ -53,6 +53,7 @@ const PlaceCard = styled.div`
 function App() {
   const [swiper, setSwiper] = useState<any>(null);
   const [activeMarker, setActiveMarker] = useState(1);
+  const [currentLocation, setCurentLocation] = useState(0);
   const [markers, setMarkers] = useState([
     { id: 1, name: "Place 1", position: [50, 30] },
     { id: 2, name: "Place 2", position: [80, 40] },
@@ -67,6 +68,10 @@ function App() {
     },
     [swiper]
   );
+
+  useEffect(() => {
+    setCurentLocation(0);
+  }, []);
 
   return useMemo(
     () => (
@@ -106,7 +111,12 @@ function App() {
                 </Swiper>
               </SwiperContainer>
               <TransformComponent>
-                <img height="900px" src={bgImage} alt="map" />
+                <img
+                  height="900px"
+                  src={bgImage}
+                  alt="map"
+                  style={{ opacity: 0.8 }}
+                />
 
                 <MarkerContainer>
                   {markers.map((marker, index) => (
@@ -119,7 +129,7 @@ function App() {
                     >
                       <CurrentLocation
                         style={
-                          activeMarker === index + 1
+                          currentLocation === index
                             ? { height: "auto" }
                             : { height: 0, opacity: 0 }
                         }
